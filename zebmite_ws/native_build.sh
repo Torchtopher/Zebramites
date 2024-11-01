@@ -88,7 +88,6 @@ catkin config --skiplist \
 	teraranger_array \
 	teraranger_array_converter \
 	turing_smart_screen \
-	velocity_controllers \
 	zed_ros \
 	wpilib_swerve_odom \
 	$EXTRA_SKIPLIST_PACKAGES

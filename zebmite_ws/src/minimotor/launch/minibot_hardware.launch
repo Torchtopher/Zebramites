@@ -27,7 +27,7 @@
 
     <!-- Load controller manager -->
     <node name="ros_control_controller_manager" pkg="controller_manager" type="controller_manager" respawn="false"
-	  output="screen" args="spawn joint_state_controller mecanum_drive_controller test_servo_controller" />
+	  output="screen" args="spawn joint_state_controller mecanum_drive_controller test_servo_controller intake_controller" />
 
     <!-- Convert joint states to /tf tranforms -->
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>

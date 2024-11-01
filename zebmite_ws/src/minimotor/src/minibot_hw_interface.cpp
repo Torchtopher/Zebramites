@@ -203,16 +203,9 @@ namespace minibot_control
 
   void MiniBotHWInterface::read(ros::Duration& elapsed_time)
   {
-    // ----------------------------------------------------
-    // ----------------------------------------------------
-    // ----------------------------------------------------
-    //
-    // FILL IN YOUR READ COMMAND FROM USB/ETHERNET/ETHERCAT/SERIAL ETC HERE
-    //
-    // ----------------------------------------------------
-    // ----------------------------------------------------
-    // ----------------------------------------------------
-    
+    if (use_websocket_ && ws_connected_) {
+      ws_client_.send(ws_hdl_, "voltage?", websocketpp::frame::opcode::text);
+    }
   }
 
   void MiniBotHWInterface::setupWebsocketLogging() {
@@ -257,29 +250,10 @@ namespace minibot_control
       ROS_INFO_STREAM("Received message: " << msg->get_payload());
   }
 
-  void MiniBotHWInterface::reconnectWebSocket(const std::string& uri) {
-    while (!ws_connected_ && ros::ok()) { // Loop until reconnected or ROS shuts down
-      websocketpp::lib::error_code ec;
-      WebSocketClient::connection_ptr con = ws_client_.get_connection(uri, ec);
-      if (ec) {
-        ROS_ERROR_STREAM("WebSocket Reconnection Error: " << ec.message());
-      } 
-      else {
-        ws_client_.connect(con);
-        ws_client_.run();  // This will block until a connection is open or fails
-      }
-
-      if (!ws_connected_) {
-        ROS_WARN_STREAM("WebSocket reconnect attempt failed, retrying in 2 seconds...");
-        std::this_thread::sleep_for(std::chrono::seconds(2)); // Wait before retrying
-      }
-    }
-  }
 
   void MiniBotHWInterface::on_close(websocketpp::connection_hdl hdl) {
     ws_connected_ = false;
     ROS_ERROR_STREAM("WebSocket connection closed. Attempting to reconnect...");
-    //reconnectWebSocket(ws_uri_);
   }
 
   void MiniBotHWInterface::write(ros::Duration& elapsed_time)
@@ -296,7 +270,7 @@ namespace minibot_control
       if (joint_velocity_[joint_id] != joint_velocity_command_[joint_id]) {
         // polymorphism FTW
         auto thisJoint = joints_[joint_names_[joint_id]];
-        command += thisJoint->setVelocity(joint_velocity_command_[joint_id]) + " ";
+        command += thisJoint->setVelocity(joint_velocity_command_[joint_id]); // + " "
         joint_velocity_[joint_id] = joint_velocity_command_[joint_id];
       }
       joint_position_[joint_id] += joint_velocity_command_[joint_id] * elapsed_time.toSec(); // if doing position control, velocity command MUST BE ZERO
@@ -304,7 +278,7 @@ namespace minibot_control
       if (joint_position_[joint_id] != joint_position_command_[joint_id]) {
         // polymorphism FTW
         auto thisJoint = joints_[joint_names_[joint_id]];
-        command += thisJoint->setPosition(joint_position_command_[joint_id]) + " ";
+        command += thisJoint->setPosition(joint_position_command_[joint_id]); // + " "
         joint_position_[joint_id] = joint_position_command_[joint_id];
       }
     }

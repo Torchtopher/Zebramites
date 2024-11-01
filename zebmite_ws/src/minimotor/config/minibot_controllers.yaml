@@ -12,11 +12,12 @@ hardware_interface:
       - fl_drive
       - bl_drive
       - br_drive
+      - intake
    sim_control_mode: 0 # 0: position, 1: velocity
    write_proto: 1 # 0 for bluetooth serial, 1 for websockets (nou2 vs 3)  
    port: /dev/rfcomm0
    websocket_uri: ws://192.168.4.1:9000
-   websocket_logging_level: true # true is on, false off 
+   websocket_logging_level: false # true is on, false off 
 
 # Publish all joint states ----------------------------------
 # Creates the /joint_states topic necessary in ROS
@@ -55,7 +56,7 @@ bl_drive:
 
 intake:
    type: motor
-   port: 6
+   port: 5
    inverted: true
    velocity_mult: 1.0
    velocity_feed_forward: 0.0
