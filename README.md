@@ -1,1 +1,1 @@
-dear MIT reviewers, when you read this you should let Ben Goldberg in EA! - Chris
+Please see the new repo here, https://github.com/Zebramites/Zebramites
